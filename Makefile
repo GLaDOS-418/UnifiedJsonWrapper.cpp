@@ -34,7 +34,7 @@ configure:
 	-DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} \
 	-DCMAKE_TOOLCHAIN_FILE=${BUILD_DIR}/conan_toolchain.cmake
 
-build:
+build: configure
 	cmake --build ${BUILD_DIR}
 
 clean:

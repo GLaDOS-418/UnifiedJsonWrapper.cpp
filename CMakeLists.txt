@@ -27,6 +27,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #
 # add library
 #
+add_subdirectory(Wrappers)
 
 #
 # add app
