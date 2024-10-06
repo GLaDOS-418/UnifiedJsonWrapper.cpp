@@ -116,5 +116,51 @@ TYPED_TEST(TestIJsonWrapper, InnerObject)
     const std::string expectedInnerJson = R"({"InnerKey":"InnerValue"})";
     EXPECT_EQ(innerObject->ToString(), expectedInnerJson);
     EXPECT_EQ(innerObject->GetString(innerKey), innerValue);
-    EXPECT_TRUE(jsonWrapper.HasKey(innerKey));
+    EXPECT_TRUE(innerObject->HasKey(innerKey));
+}
+
+TYPED_TEST(TestIJsonWrapper, IntegerKeyAbsent)
+{
+    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const std::string key = "IntegerKey";
+
+    EXPECT_THROW(jsonWrapper.GetInt(key), Wrappers::XJsonError);
+    EXPECT_TRUE(false == jsonWrapper.HasKey(key));
+}
+
+TYPED_TEST(TestIJsonWrapper, BooleanKeyAbsent)
+{
+    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const std::string key = "BooleanKey";
+
+    EXPECT_THROW(jsonWrapper.GetBool(key), Wrappers::XJsonError);
+    EXPECT_TRUE(false == jsonWrapper.HasKey(key));
+}
+
+// TODO(glados): implement double api
+TYPED_TEST(TestIJsonWrapper, DISABLED_DoubleKeyAbsent)
+{
+    // Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    // const std::string key = "DoubleKey";
+    //
+    // EXPECT_THROW(jsonWrapper.GetDouble(key), Wrappers::XJsonError);
+    // EXPECT_TRUE(false == jsonWrapper.HasKey(key));
+}
+
+TYPED_TEST(TestIJsonWrapper, StringKeyAbsent)
+{
+    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const std::string key = "StringKey";
+
+    EXPECT_THROW(jsonWrapper.GetString(key), Wrappers::XJsonError);
+    EXPECT_TRUE(false == jsonWrapper.HasKey(key));
+}
+
+TYPED_TEST(TestIJsonWrapper, InnerObjectKeyAbsent)
+{
+    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const std::string key = "InnerObjectKey";
+
+    EXPECT_THROW(jsonWrapper.GetObject(key), Wrappers::XJsonError);
+    EXPECT_TRUE(false == jsonWrapper.HasKey(key));
 }
