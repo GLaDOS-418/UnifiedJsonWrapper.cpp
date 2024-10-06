@@ -23,16 +23,13 @@ endif()
 message("\"${CMAKE_BUILD_TYPE}\" type build.")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+include(cmake/compiler_options.cmake)
+include(cmake/static_analyzers.cmake)
 
 #
 # add library
 #
 add_subdirectory(Wrappers)
-
-#
-# add app
-#
-add_subdirectory(App)
 
 #
 # add tests

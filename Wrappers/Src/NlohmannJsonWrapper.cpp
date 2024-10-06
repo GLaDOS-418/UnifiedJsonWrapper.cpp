@@ -1,5 +1,11 @@
 #include "Implementations/NlohmannJsonWrapper.hpp"
+
+#include <string>
+#include <cstdint>
+#include <memory>
+
 #include "Exceptions/XJsonError.hpp"
+#include "Interfaces/IJsonWrapper.hpp"
 
 namespace Wrappers
 {

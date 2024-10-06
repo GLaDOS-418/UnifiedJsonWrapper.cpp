@@ -54,6 +54,8 @@ namespace Wrappers
 
         std::string ToString() const override;
 
+        void someAPI() const {}
+
     private:
         nlohmann::json _json;
     };

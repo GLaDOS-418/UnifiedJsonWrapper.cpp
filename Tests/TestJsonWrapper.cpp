@@ -2,11 +2,16 @@
  * @file TestIJsonWrapper.cpp
  * @brief This file contains test cases for `Wrappers::IJsonWrapper` interface.
  ************************************************************************************/
+#include <cstdint>
+#include <limits>
+#include <memory>
+#include <string>
 
 #include <gtest/gtest.h>
 
 #include "Exceptions/XJsonError.hpp"
 #include "Implementations/NlohmannJsonWrapper.hpp"
+#include "Interfaces/IJsonWrapper.hpp"
 
 /**
  * @brief Typed test fixture class for `Wrapper::IJsonWrapper` interface implementations.
@@ -41,7 +46,7 @@ TYPED_TEST_SUITE(TestIJsonWrapper, TestTypes, );
 
 TYPED_TEST(TestIJsonWrapper, DefaultJson)
 {
-    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
     const std::string expectedJson = R"(null)";
 
     EXPECT_EQ(jsonWrapper.ToString(), expectedJson);
@@ -49,7 +54,7 @@ TYPED_TEST(TestIJsonWrapper, DefaultJson)
 
 TYPED_TEST(TestIJsonWrapper, EmptyJson)
 {
-    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
     const std::string expectedJson = R"({})";
 
     EXPECT_EQ(jsonWrapper.GetEmptyObject()->ToString(), expectedJson);
@@ -79,7 +84,7 @@ TYPED_TEST(TestIJsonWrapper, UnsignedValue)
     constexpr int64_t value = -1;
     constexpr uint64_t expectedValue = std::numeric_limits<uint64_t>::max();
 
-    jsonWrapper.SetUnsigned(key, value);
+    jsonWrapper.SetUnsigned(key, static_cast<uint64_t>(value));
 
     const std::string uintMaxStr = std::to_string(expectedValue);
     const std::string expectedJson = R"({"UnsignedInteger":)" + uintMaxStr + R"(})";
@@ -166,7 +171,7 @@ TYPED_TEST(TestIJsonWrapper, InnerObject)
 
     EXPECT_EQ(jsonWrapper.ToString(), expectedJson);
 
-    std::unique_ptr<const Wrappers::IJsonWrapper> innerObject = jsonWrapper.GetObject(key);
+    const std::unique_ptr<const Wrappers::IJsonWrapper> innerObject = jsonWrapper.GetObject(key);
     EXPECT_TRUE(nullptr != innerObject);
     EXPECT_TRUE(jsonWrapper.HasKey(key));
 
@@ -178,7 +183,7 @@ TYPED_TEST(TestIJsonWrapper, InnerObject)
 
 TYPED_TEST(TestIJsonWrapper, IntegerKeyAbsent)
 {
-    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
     const std::string key = "IntegerKey";
 
     EXPECT_THROW(jsonWrapper.GetInt(key), Wrappers::XJsonError);
@@ -187,7 +192,7 @@ TYPED_TEST(TestIJsonWrapper, IntegerKeyAbsent)
 
 TYPED_TEST(TestIJsonWrapper, UnsignedIntegerKeyAbsent)
 {
-    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
     const std::string key = "UnsignedIntegerKey";
 
     EXPECT_THROW(jsonWrapper.GetUnsigned(key), Wrappers::XJsonError);
@@ -196,7 +201,7 @@ TYPED_TEST(TestIJsonWrapper, UnsignedIntegerKeyAbsent)
 
 TYPED_TEST(TestIJsonWrapper, DoubleKeyAbsent)
 {
-    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
     const std::string key = "DoubleKey";
 
     EXPECT_THROW(jsonWrapper.GetDouble(key), Wrappers::XJsonError);
@@ -205,7 +210,7 @@ TYPED_TEST(TestIJsonWrapper, DoubleKeyAbsent)
 
 TYPED_TEST(TestIJsonWrapper, BooleanKeyAbsent)
 {
-    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
     const std::string key = "BooleanKey";
 
     EXPECT_THROW(jsonWrapper.GetBool(key), Wrappers::XJsonError);
@@ -214,7 +219,7 @@ TYPED_TEST(TestIJsonWrapper, BooleanKeyAbsent)
 
 TYPED_TEST(TestIJsonWrapper, StringKeyAbsent)
 {
-    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
     const std::string key = "StringKey";
 
     EXPECT_THROW(jsonWrapper.GetString(key), Wrappers::XJsonError);
@@ -223,7 +228,7 @@ TYPED_TEST(TestIJsonWrapper, StringKeyAbsent)
 
 TYPED_TEST(TestIJsonWrapper, InnerObjectKeyAbsent)
 {
-    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
     const std::string key = "InnerObjectKey";
 
     EXPECT_THROW(jsonWrapper.GetObject(key), Wrappers::XJsonError);
@@ -287,7 +292,7 @@ TYPED_TEST(TestIJsonWrapper, ParseIllFormedJsonBadStructure)
 TYPED_TEST(TestIJsonWrapper, ParseIllFormedJsonNonUtf8)
 {
     // Correct JSON structure, but the "message" contains invalid UTF-8 bytes
-    std::string invalidJson = R"({
+    const std::string invalidJson = R"({
         "name": "John Doe",
         "message": "\xC3\x28"
     })";

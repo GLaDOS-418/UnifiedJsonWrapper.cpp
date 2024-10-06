@@ -47,25 +47,12 @@ deepclean: clean
 rebuild: clean  package configure build
 	
 test:
-	ctest -C ${BUILD_TYPE} --test-dir ${BUILD_DIR} -V
+	ctest -C ${BUILD_TYPE} --test-dir ${BUILD_DIR}
 
 testprint:
 	cd ${BUILD_DIR} && \
-		ctest --rerun-failed --output-on-failure -C ${BUILD_TYPE} && cd ..
+		ctest --rerun-failed --output-on-failure -V -C ${BUILD_TYPE} && cd ..
 
-run: check_project_name check_project_exists
-	./${BUILD_DIR}/${PROJECT_NAME}
-
-check_project_name:
-	@if [ -z "${PROJECT_NAME}" ]; then \
-		echo "Error: PROJECT_NAME is empty. Set a valid project name."; \
-		exit 1; \
-	fi
-check_project_exists:
-	@if [ ! -e ./${BUILD_DIR}/${PROJECT_NAME} ]; then \
-		echo "Error: ${PROJECT_NAME} executable not found. Run 'make build' first."; \
-		exit 1; \
-	fi
 image:
 	docker build -f ./.devcontainer/Dockerfile \
 		--tag=${IMAGE_NAME}:${IMAGE_TAG} .
