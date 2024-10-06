@@ -7,22 +7,22 @@
 
 namespace Wrappers
 {
+    /**
+     * @class NlohmannJsonWrapper
+     * @brief Implementation of `Wrappers::IJsonWrapper` interface.
+     */
     class NlohmannJsonWrapper : public IJsonWrapper
     {
     public:
         NlohmannJsonWrapper() = default;
 
-        NlohmannJsonWrapper(const NlohmannJsonWrapper&) = default;
-
-        NlohmannJsonWrapper(NlohmannJsonWrapper&&) = default;
-
-        NlohmannJsonWrapper& operator=(const NlohmannJsonWrapper&) = default;
-
-        NlohmannJsonWrapper& operator=(NlohmannJsonWrapper&&) = default;
-
         ~NlohmannJsonWrapper() override = default;
 
         void SetInt(const std::string& key, int64_t value) override;
+
+        void SetUnsigned(const std::string& key, uint64_t value) override;
+
+        void SetDouble(const std::string& key, double value) override;
 
         void SetBool(const std::string& key, bool value) override;
 
@@ -32,7 +32,11 @@ namespace Wrappers
 
         void SetNull(const std::string& key) override;
 
-        int64_t GetInt(const std::string& key) override;
+        int64_t GetInt(const std::string& key) const override;
+
+        uint64_t GetUnsigned(const std::string& key) const override;
+
+        double GetDouble(const std::string& key) const override;
 
         bool GetBool(const std::string& key) const override;
 
@@ -43,6 +47,8 @@ namespace Wrappers
         bool IsNull(const std::string& key) const override;
 
         bool HasKey(const std::string& key) const override;
+
+        std::unique_ptr<IJsonWrapper> GetEmptyObject() const override;
 
         void Parse(const std::string& inputJson) override;
 

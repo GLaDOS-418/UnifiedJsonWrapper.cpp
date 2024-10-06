@@ -12,7 +12,31 @@ namespace Wrappers
         }
         catch (const nlohmann::json::exception& e)
         {
-            throw XJsonError{std::string{"Failed to set null: "} + e.what()};
+            throw XJsonError{std::string{"Failed to set Integer: "} + e.what()};
+        }
+    }
+
+    void NlohmannJsonWrapper::SetUnsigned(const std::string& key, uint64_t value)
+    {
+        try
+        {
+            _json[key] = value;
+        }
+        catch (const nlohmann::json::exception& e)
+        {
+            throw XJsonError{std::string{"Failed to set Unsigned Integer: "} + e.what()};
+        }
+    }
+
+    void NlohmannJsonWrapper::SetDouble(const std::string& key, double value)
+    {
+        try
+        {
+            _json[key] = value;
+        }
+        catch (const nlohmann::json::exception& e)
+        {
+            throw XJsonError{std::string{"Failed to set Double: "} + e.what()};
         }
     }
 
@@ -24,7 +48,7 @@ namespace Wrappers
         }
         catch (const nlohmann::json::exception& e)
         {
-            throw XJsonError{std::string{"Failed to set null: "} + e.what()};
+            throw XJsonError{std::string{"Failed to set Boolean: "} + e.what()};
         }
     }
 
@@ -36,7 +60,7 @@ namespace Wrappers
         }
         catch (const nlohmann::json::exception& e)
         {
-            throw XJsonError{std::string{"Failed to set null: "} + e.what()};
+            throw XJsonError{std::string{"Failed to set String: "} + e.what()};
         }
     }
 
@@ -54,7 +78,7 @@ namespace Wrappers
         }
         catch (const nlohmann::json::exception& e)
         {
-            throw XJsonError{std::string{"Failed to set null: "} + e.what()};
+            throw XJsonError{std::string{"Failed to set Inner Object: "} + e.what()};
         }
     }
 
@@ -70,7 +94,7 @@ namespace Wrappers
         }
     }
 
-    int64_t NlohmannJsonWrapper::GetInt(const std::string& key)
+    int64_t NlohmannJsonWrapper::GetInt(const std::string& key) const
     {
         try
         {
@@ -78,7 +102,31 @@ namespace Wrappers
         }
         catch (const nlohmann::json::exception& e)
         {
-            throw XJsonError("Failed to get integer value.");
+            throw XJsonError("Failed to get Integer value.");
+        }
+    }
+
+    uint64_t NlohmannJsonWrapper::GetUnsigned(const std::string& key) const
+    {
+        try
+        {
+            return _json.at(key).get<uint64_t>();
+        }
+        catch (const nlohmann::json::exception& e)
+        {
+            throw XJsonError("Failed to get Unsigned Integer value.");
+        }
+    }
+
+    double NlohmannJsonWrapper::GetDouble(const std::string& key) const
+    {
+        try
+        {
+            return _json.at(key).get<double>();
+        }
+        catch (const nlohmann::json::exception& e)
+        {
+            throw XJsonError("Failed to get Double value.");
         }
     }
 
@@ -90,7 +138,7 @@ namespace Wrappers
         }
         catch (const nlohmann::json::exception& e)
         {
-            throw XJsonError("Failed to get integer value.");
+            throw XJsonError("Failed to get Boolean value.");
         }
     }
 
@@ -102,7 +150,7 @@ namespace Wrappers
         }
         catch (const nlohmann::json::exception& e)
         {
-            throw XJsonError("Failed to get integer value.");
+            throw XJsonError("Failed to get String value.");
         }
     }
 
@@ -114,7 +162,7 @@ namespace Wrappers
 
             if (nullptr == nlohmannWrapper)
             {
-                throw XJsonError{"Could not create JSON object."};
+                throw XJsonError{"Could not allocate for JSON object."};
             }
 
             nlohmannWrapper->_json = _json.at(key).get<nlohmann::json>();
@@ -123,7 +171,7 @@ namespace Wrappers
         }
         catch (const nlohmann::json::exception& e)
         {
-            throw XJsonError("Failed to get integer value.");
+            throw XJsonError("Failed to get Inner Object.");
         }
     }
 
@@ -144,11 +192,32 @@ namespace Wrappers
         return _json.contains(key);
     }
 
+    std::unique_ptr<IJsonWrapper> NlohmannJsonWrapper::GetEmptyObject() const
+    {
+        try
+        {
+            std::unique_ptr<NlohmannJsonWrapper> emptyObject = std::make_unique<NlohmannJsonWrapper>();
+            if (nullptr == emptyObject)
+            {
+                throw XJsonError("Could not create an empty JSON object.");
+            }
+
+            emptyObject->_json = nlohmann::json::object();
+
+            return emptyObject;
+        }
+        catch (const nlohmann::json::exception& e)
+        {
+            throw XJsonError{"Failed to create an empty Json object."};
+        }
+    }
+
     void NlohmannJsonWrapper::Parse(const std::string& inputJson)
     {
         try
         {
-            // nullptr -> no callback. true -> throw exception on bad parse.
+            // 'nullptr' => no callback.
+            // 'true' => throw exception on bad parse.
             _json = nlohmann::json::parse(inputJson, nullptr, true);
         }
         catch (const nlohmann::json::exception& e)
@@ -165,7 +234,7 @@ namespace Wrappers
         }
         catch (const nlohmann::json::exception& e)
         {
-            throw XJsonError{"Failed to check nullability of the value."};
+            throw XJsonError{"Failed to convert JSON object to String. Verify if it's UTF-8 encoded."};
         }
     }
 
