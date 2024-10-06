@@ -16,7 +16,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE True)
 # Include directories
 #
 target_include_directories(${PROJECT_NAME}
-                           PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/Includes")
+                           PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/Includes")
 
 #
 # add third party dependencies

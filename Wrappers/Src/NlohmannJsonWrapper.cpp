@@ -28,7 +28,7 @@ namespace Wrappers
         }
     }
 
-    void NlohmannJsonWrapper::SetString(const std::string& key, std::string value)
+    void NlohmannJsonWrapper::SetString(const std::string& key, const std::string& value)
     {
         try
         {

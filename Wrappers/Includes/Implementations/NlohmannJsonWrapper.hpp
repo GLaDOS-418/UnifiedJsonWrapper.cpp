@@ -10,13 +10,23 @@ namespace Wrappers
     class NlohmannJsonWrapper : public IJsonWrapper
     {
     public:
+        NlohmannJsonWrapper() = default;
+
+        NlohmannJsonWrapper(const NlohmannJsonWrapper&) = default;
+
+        NlohmannJsonWrapper(NlohmannJsonWrapper&&) = default;
+
+        NlohmannJsonWrapper& operator=(const NlohmannJsonWrapper&) = default;
+
+        NlohmannJsonWrapper& operator=(NlohmannJsonWrapper&&) = default;
+
         ~NlohmannJsonWrapper() override = default;
 
         void SetInt(const std::string& key, int64_t value) override;
 
         void SetBool(const std::string& key, bool value) override;
 
-        void SetString(const std::string& key, std::string value) override;
+        void SetString(const std::string& key, const std::string& value) override;
 
         void SetObject(const std::string& key, std::unique_ptr<IJsonWrapper> jsonObject) override;
 

@@ -47,7 +47,7 @@ deepclean: clean
 rebuild: clean  package configure build
 	
 test:
-	ctest -C ${BUILD_TYPE} --test-dir ${BUILD_DIR}
+	ctest -C ${BUILD_TYPE} --test-dir ${BUILD_DIR} -V
 
 testprint:
 	cd ${BUILD_DIR} && \
