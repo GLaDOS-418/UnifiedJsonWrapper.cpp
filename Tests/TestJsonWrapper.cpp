@@ -1,6 +1,6 @@
-#include "gtest/gtest.h"
 #include <gtest/gtest.h>
 
+#include "Exceptions/XJsonError.hpp"
 #include "Implementations/NlohmannJsonWrapper.hpp"
 
 template<typename TJsonWrapperImpl>
@@ -17,6 +17,22 @@ using TestTypes = ::testing::Types<Wrappers::NlohmannJsonWrapper>;
 // Ref: https://github.com/google/googletest/issues/2271#issuecomment-665742471
 TYPED_TEST_SUITE(TestIJsonWrapper, TestTypes, );
 
+TYPED_TEST(TestIJsonWrapper, DefaultJson)
+{
+    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const std::string expectedJson = R"(null)";
+
+    EXPECT_EQ(jsonWrapper.ToString(), expectedJson);
+}
+
+TYPED_TEST(TestIJsonWrapper, EmptyJson)
+{
+    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    const std::string expectedJson = R"(null)";
+
+    EXPECT_EQ(jsonWrapper.ToString(), expectedJson);
+}
+
 TYPED_TEST(TestIJsonWrapper, IntegerValue)
 {
     Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
@@ -25,7 +41,7 @@ TYPED_TEST(TestIJsonWrapper, IntegerValue)
 
     jsonWrapper.SetInt(key, value);
 
-    std::string expectedJson = R"({"Integer":10})";
+    const std::string expectedJson = R"({"Integer":10})";
 
     EXPECT_EQ(jsonWrapper.ToString(), expectedJson);
     EXPECT_EQ(jsonWrapper.GetInt(key), value);
@@ -41,7 +57,7 @@ TYPED_TEST(TestIJsonWrapper, BooleanValue)
     jsonWrapper.SetBool(falseKey, false);
     jsonWrapper.SetBool(trueKey, true);
 
-    std::string expectedJson = R"({"FalseKey":false,"TrueKey":true})";
+    const std::string expectedJson = R"({"FalseKey":false,"TrueKey":true})";
 
     EXPECT_EQ(jsonWrapper.ToString(), expectedJson);
     EXPECT_TRUE(jsonWrapper.HasKey(trueKey));
@@ -57,7 +73,7 @@ TYPED_TEST(TestIJsonWrapper, NullValue)
 
     jsonWrapper.SetNull(key);
 
-    std::string expectedJson = R"({"Null":null})";
+    const std::string expectedJson = R"({"Null":null})";
 
     EXPECT_EQ(jsonWrapper.ToString(), expectedJson);
     EXPECT_TRUE(jsonWrapper.IsNull(key));
@@ -72,14 +88,14 @@ TYPED_TEST(TestIJsonWrapper, StringValue)
 
     jsonWrapper.SetString(key, value);
 
-    std::string expectedJson = R"({"String":"string_value"})";
+    const std::string expectedJson = R"({"String":"string_value"})";
 
     EXPECT_EQ(jsonWrapper.ToString(), expectedJson);
     EXPECT_EQ(jsonWrapper.GetString(key), value);
     EXPECT_TRUE(jsonWrapper.HasKey(key));
 }
 
-// NOTE: implement double api.
+// TODO(glados): implement double api.
 TYPED_TEST(TestIJsonWrapper, DISABLED_DoubleValue)
 {
     // Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
@@ -87,7 +103,7 @@ TYPED_TEST(TestIJsonWrapper, DISABLED_DoubleValue)
     // const std::string key = "Double";
     // constexpr double value = 3.14;
     //
-    // std::string expectedJson = R"({"Double":3.14})";
+    // const std::string expectedJson = R"({"Double":3.14})";
 
     // EXPECT_EQ(jsonWrapper.ToString(), expectedJson);
     // EXPECT_DOUBLE_EQ(jsonWrapper.GetDouble(key), value);
@@ -105,11 +121,11 @@ TYPED_TEST(TestIJsonWrapper, InnerObject)
     const std::string key = "InnerObject";
     jsonWrapper.SetObject(key, std::move(this->_innerObject));
 
-    std::string expectedJson = R"({"InnerObject":{"InnerKey":"InnerValue"}})";
+    const std::string expectedJson = R"({"InnerObject":{"InnerKey":"InnerValue"}})";
 
     EXPECT_EQ(jsonWrapper.ToString(), expectedJson);
 
-    std::unique_ptr<Wrappers::IJsonWrapper> innerObject = jsonWrapper.GetObject(key);
+    std::unique_ptr<const Wrappers::IJsonWrapper> innerObject = jsonWrapper.GetObject(key);
     EXPECT_TRUE(nullptr != innerObject);
     EXPECT_TRUE(jsonWrapper.HasKey(key));
 
@@ -163,4 +179,35 @@ TYPED_TEST(TestIJsonWrapper, InnerObjectKeyAbsent)
 
     EXPECT_THROW(jsonWrapper.GetObject(key), Wrappers::XJsonError);
     EXPECT_TRUE(false == jsonWrapper.HasKey(key));
+}
+
+TYPED_TEST(TestIJsonWrapper, ParseWellFormedJson)
+{
+    const std::string inputJson = R"(
+        {
+          "pi": 3.141,
+          "happy": true,
+          "name": "json",
+          "nothing": null,
+          "answer": {
+            "everything": 42
+          },
+          "list": [1, 0, 2],
+          "object": {
+            "currency": "USD",
+            "value": 42.99
+          }
+        })";
+
+    //NOTE: 1) the keys get ordered.
+    //NOTE: 2) even the list (which is not supported yet, gets serialized).
+    const std::string expectedJson = R"({"answer":{"everything":42},"happy":true,)"
+                                     R"("list":[1,0,2],"name":"json","nothing":null,)"
+                                     R"("object":{"currency":"USD","value":42.99},)"
+                                     R"("pi":3.141})";
+
+    Wrappers::IJsonWrapper& jsonWrapper = this->_jsonWrapper;
+    jsonWrapper.Parse(inputJson);
+
+    EXPECT_EQ(jsonWrapper.ToString(), expectedJson);
 }
