@@ -32,7 +32,8 @@ package:
 configure:
 	cmake -S . -B ${BUILD_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
 	-DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} \
-	-DCMAKE_TOOLCHAIN_FILE=${BUILD_DIR}/conan_toolchain.cmake
+	-DCMAKE_TOOLCHAIN_FILE=${BUILD_DIR}/conan_toolchain.cmake \
+	-DBUILD_TESTS=True
 
 build: configure
 	cmake --build ${BUILD_DIR}
@@ -46,7 +47,7 @@ deepclean: clean
 rebuild: clean  package configure build
 	
 test:
-	cd ${BUILD_DIR} && ctest -C ${BUILD_TYPE} && cd ..
+	ctest -C ${BUILD_TYPE} --test-dir ${BUILD_DIR}
 
 testprint:
 	cd ${BUILD_DIR} && \

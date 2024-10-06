@@ -5,7 +5,7 @@ project(UnifiedJsonWrapper CXX)
 #
 # cpp standard
 #
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #
@@ -37,3 +37,7 @@ add_subdirectory(App)
 #
 # add tests
 #
+if(BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(Tests)
+endif()

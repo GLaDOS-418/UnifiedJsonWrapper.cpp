@@ -2,6 +2,7 @@
 .vscode/*
 CMakeCache.*
 CMakeFiles/*
+Testing/*
 
 CMakeUserPresets.json
 
